@@ -260,6 +260,7 @@ export function reconcileChildren(
   nextChildren: any,
   renderLanes: Lanes,
 ) {
+  // mount时
   if (current === null) {
     // If this is a fresh new component that hasn't been rendered yet, we
     // won't update its child set by applying minimal side-effects. Instead,
@@ -275,7 +276,7 @@ export function reconcileChildren(
       nextChildren,
       renderLanes,
     );
-  } else {
+  } else { // update 时
     // If the current child is the same as the work in progress, it means that
     // we haven't yet started any work on these children. Therefore, we use
     // the clone algorithm to create a copy of all the current children.
@@ -1036,6 +1037,7 @@ function updateClassComponent(
     mountClassInstance(workInProgress, Component, nextProps, renderLanes); // 初始化挂载
     shouldUpdate = true;
   } else if (current === null) {
+    // 复用实例 但还是调用首次渲染的生命周期
     // In a resume, we'll already have an instance we can reuse.
     shouldUpdate = resumeMountClassInstance(
       workInProgress,
@@ -1112,6 +1114,7 @@ function finishClassComponent(
     // re-render a fallback. This is temporary until we migrate everyone to
     // the new API.
     // TODO: Warn in a future release.
+    // 捕获到错误且没有 getDerivedStateFromError 则 nextChildren = null
     nextChildren = null;
 
     if (enableProfilerTimer) {
@@ -1134,6 +1137,7 @@ function finishClassComponent(
       }
       setIsRendering(false);
     } else {
+      // getDerivedStateFromError 在函数外catch到错误并执行立即更新为正确的state，所以可以执行render（）
       // 执行render方法在 mountClassInstance 之后（first mount）
       nextChildren = instance.render();
     }
@@ -1146,6 +1150,7 @@ function finishClassComponent(
     // the existing children. Conceptually, the normal children and the children
     // that are shown on error are two different sets, so we shouldn't reuse
     // normal children even if their identities match.
+    // 捕获到错误且计算child进行调和
     forceUnmountCurrentAndReconcile(
       current,
       workInProgress,

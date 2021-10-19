@@ -914,6 +914,7 @@ function mountClassInstance(
     instance.state = workInProgress.memoizedState;
   }
 
+  // 标记 componentDidMount life-cycle 待到提交阶段更新完 dom 后执行
   if (typeof instance.componentDidMount === 'function') {
     let fiberFlags: Flags = Update;
     if (enableSuspenseLayoutEffectSemantics) {
