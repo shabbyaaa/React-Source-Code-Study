@@ -351,6 +351,7 @@ function ChildReconciler(shouldTrackSideEffects) {
     // This is simpler for the single child case. We only need to do a
     // placement for inserting new children.
     if (shouldTrackSideEffects && newFiber.alternate === null) {
+      // 把新创建的fiber 标记为 Placement
       newFiber.flags |= Placement;
     }
     return newFiber;
@@ -1105,6 +1106,7 @@ function ChildReconciler(shouldTrackSideEffects) {
         const elementType = element.type;
         if (elementType === REACT_FRAGMENT_TYPE) {
           if (child.tag === Fragment) {
+            // 原先节点存在 则先删除其兄弟节点，复用其节点并返回
             deleteRemainingChildren(returnFiber, child.sibling);
             const existing = useFiber(child, element.props.children);
             existing.return = returnFiber;
@@ -1143,16 +1145,20 @@ function ChildReconciler(shouldTrackSideEffects) {
           }
         }
         // Didn't match.
+        // key相等但type不相等，删除旧子节点及兄弟节点，跳出循环
         deleteRemainingChildren(returnFiber, child);
         break;
       } else {
+         // key不相等，删除此旧子节点，继续循环
+        //  并不是真正的删除  returnFiber.flags |= ChildDeletion || deletions.push(childToDelete)
         deleteChild(returnFiber, child);
       }
+      // 继续遍历此旧子节点的兄弟节点,找寻复用节点
       child = child.sibling;
     }
 
     if (element.type === REACT_FRAGMENT_TYPE) {
-      const created = createFiberFromFragment(
+      const created = createFiberFromFragment( // new FiberNode(tag, pendingProps, key, mode);
         element.props.children,
         returnFiber.mode,
         lanes,
@@ -1209,8 +1215,8 @@ function ChildReconciler(shouldTrackSideEffects) {
   // children and the parent.
   function reconcileChildFibers(
     returnFiber: Fiber,
-    currentFirstChild: Fiber | null,
-    newChild: any,
+    currentFirstChild: Fiber | null, // mount时为null update时为current.child
+    newChild: any, // instance.render()
     lanes: Lanes,
   ): Fiber | null {
     // This function is not recursive.
@@ -1226,6 +1232,7 @@ function ChildReconciler(shouldTrackSideEffects) {
       newChild !== null &&
       newChild.type === REACT_FRAGMENT_TYPE &&
       newChild.key === null;
+      // 为 Fragment 时 取 Fragment 的children
     if (isUnkeyedTopLevelFragment) {
       newChild = newChild.props.children;
     }
