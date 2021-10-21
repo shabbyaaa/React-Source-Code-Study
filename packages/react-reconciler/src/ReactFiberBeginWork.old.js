@@ -270,7 +270,7 @@ export function reconcileChildren(
      * export const reconcileChildFibers = ChildReconciler(true);
      * export const mountChildFibers = ChildReconciler(false);
      */
-    workInProgress.child = mountChildFibers(
+    workInProgress.child = ∂(
       workInProgress,
       null,
       nextChildren,
@@ -1091,6 +1091,7 @@ function finishClassComponent(
 
   const didCaptureError = (workInProgress.flags & DidCapture) !== NoFlags;
 
+  // 没有更新也没有错误捕获 直接跳过不进行渲染
   if (!shouldUpdate && !didCaptureError) {
     // Context providers should defer to sCU for rendering
     if (hasContext) {

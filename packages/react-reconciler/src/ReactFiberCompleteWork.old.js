@@ -782,6 +782,7 @@ function bubbleProperties(completedWork: Fiber) {
   return didBailout;
 }
 
+// 归阶段
 function completeWork(
   current: Fiber | null,
   workInProgress: Fiber,

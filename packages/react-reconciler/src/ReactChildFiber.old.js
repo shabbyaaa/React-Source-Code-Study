@@ -1102,6 +1102,7 @@ function ChildReconciler(shouldTrackSideEffects) {
     while (child !== null) {
       // TODO: If key === null and child.key === null, then this only applies to
       // the first item in the list.
+      // key相同 可复用
       if (child.key === key) {
         const elementType = element.type;
         if (elementType === REACT_FRAGMENT_TYPE) {
@@ -1232,7 +1233,7 @@ function ChildReconciler(shouldTrackSideEffects) {
       newChild !== null &&
       newChild.type === REACT_FRAGMENT_TYPE &&
       newChild.key === null;
-      // 为 Fragment 时 取 Fragment 的children
+      // 第一级为 Fragment 且没有key时 取 Fragment 的children
     if (isUnkeyedTopLevelFragment) {
       newChild = newChild.props.children;
     }
