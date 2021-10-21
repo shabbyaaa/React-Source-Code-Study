@@ -1,4 +1,4 @@
-# React-Source-Code-Stydy
+# React-Source-Code-Study
 存放阅读React源码时的注释和笔记
 
 ### 仓库文件
