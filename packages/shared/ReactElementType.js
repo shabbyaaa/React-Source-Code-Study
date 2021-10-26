@@ -13,12 +13,14 @@ export type Source = {|
 |};
 
 export type ReactElement = {|
-  $$typeof: any,
-  type: any,
+  $$typeof: any, // 辨别ReactElement对象
+
+  // 内部属性
+  type: any, // 表明节点的种类
   key: any,
   ref: any,
   props: any,
-  // ReactFiber
+  // ReactFiber  记录创建对象的 Fiber节点，还未与Fiber树关联之前，该属性为null
   _owner: any,
 
   // __DEV__

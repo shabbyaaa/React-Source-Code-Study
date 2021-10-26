@@ -9,7 +9,6 @@
 
 import type {Source} from 'shared/ReactElementType';
 import type {
-  RefObject,
   ReactContext,
   MutableSourceSubscribeFn,
   MutableSourceGetSnapshotFn,
