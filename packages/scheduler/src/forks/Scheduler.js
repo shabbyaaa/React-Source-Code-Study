@@ -330,13 +330,14 @@ function unstable_scheduleCallback(priorityLevel, callback, options) {
 
   var expirationTime = startTime + timeout;
 
+  // 最小堆
   var newTask = {
-    id: taskIdCounter++,
-    callback,
-    priorityLevel,
-    startTime,
-    expirationTime,
-    sortIndex: -1,
+    id: taskIdCounter++, // 唯一标识
+    callback, // 指向react-reconciler包所提供的的回调函数
+    priorityLevel, // 优先级
+    startTime, // 时间戳 代表task的开始时间（创建时间+延时时间）
+    expirationTime, // 过期时间
+    sortIndex: -1, // 控制task在队列中的次序 值越小约靠前
   };
   if (enableProfiling) {
     newTask.isQueued = false;

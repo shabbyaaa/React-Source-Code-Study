@@ -1,4 +1,19 @@
-# Fiber
+## render渲染器 reconciler构造器 scheduler调度器
+
+1. 渲染器 react-dom
+   - 将react-reconciler构造出来的fiber树表现出来，生成dom节点，生成字符串（ssr） 
+2. 构造器 reconciler
+   - 装载渲染器
+   - 接收react-dom包（初次render）和react包（后续更新）发起的更新请求
+   - 将Fiber树的构造过程包装在一个回调函数中，并将此回调函数传入到scheduler包等待调度
+
+3. 调度器
+   - 把react-reconciler提供的回调函数，包装到一个任务对象中
+   - 在内部维护一个更新队列，优先级高的排在最前面
+   - 循环消费队列，直到队列清空
+
+## Fiber
+
 ### ReactElement对象
 所有采用jsx语法书写的节点，都会被编译器转换，最终会以React.createElement()的方式，创建一个与之对应的ReactElement对象
 #### shared/ReactElementType.js
@@ -79,7 +94,8 @@
   export const CacheComponent = 24;
 ```
 
-# UpdateQueue
+## UpdateQueue
+
 > 在Fiber中并没有pendingState，那么新的state如何和memoizedState做比较呢
 
 更新队列updateQueue作为Fiber对象的一个属性，通过shared将各个更新对象Update 串联起来
@@ -111,5 +127,25 @@ type UpdateQueue<State> = {
   shared: SharedQueue<State> | null, // 共享队列
   effects: Array<Update<State>> // 用于保存callback回调函数的Update对象，在commit之后会依次执行里面的回调函数
 }
+```
+
+## Scheduler - Task
+
+> scheduler负责调度 维护一个任务队列 taskQueue, 
+
+#### Scheduler.js
+
+```jsx
+  var expirationTime = startTime + timeout;
+
+  // 最小堆
+  var newTask = {
+    id: taskIdCounter++, // 唯一标识
+    callback, // 指向react-reconciler包所提供的的回调函数
+    priorityLevel, // 优先级
+    startTime, // 时间戳 代表task的开始时间（创建时间+延时时间）
+    expirationTime, // 过期时间
+    sortIndex: -1, // 控制task在队列中的次序 值越小约靠前
+  };
 ```
 
