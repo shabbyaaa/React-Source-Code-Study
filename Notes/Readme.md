@@ -1,3 +1,4 @@
+# Fiber
 ### ReactElement对象
 所有采用jsx语法书写的节点，都会被编译器转换，最终会以React.createElement()的方式，创建一个与之对应的ReactElement对象
 #### shared/ReactElementType.js
@@ -77,3 +78,38 @@
   export const LegacyHiddenComponent = 23;
   export const CacheComponent = 24;
 ```
+
+# UpdateQueue
+> 在Fiber中并没有pendingState，那么新的state如何和memoizedState做比较呢
+
+更新队列updateQueue作为Fiber对象的一个属性，通过shared将各个更新对象Update 串联起来
+
+Fiber和ReactElement共同构成了一个树形结构
+
+#### ReactUpdateQueue.js
+
+```jsx
+type Update<State> = {
+  eventTime. 
+  lane,
+  tag, // Update的种类 UpdateState，ReplaceState，ForceUpdate，CaptureUpdate
+  payload, // Update真正需要更新的数据，可以设置为一个回调函数或者对象
+  callback, // 回调函数，commit完成之后调用
+  next: Update<State> | null // 指向链表的下一个，UpdateQueue为环形链表，最后一个Update.next指向第一个Update对象
+}
+
+type SharedQueue<State> = {
+  pending: Update<State> | null, // 指向即将输入Update队列，在class组件调用setState()之后，沪江新的Update对象添加打这个队列中
+  interleaved: Update<State> | null,
+  Lanes: Lanes
+}
+
+type UpdateQueue<State> = {
+  baseState: State, // 表示此队列基础state
+  firstBaseUpdate: Update<State> | null, // 指向基础队列队首
+  lastBaseUpdate: Update<State> | null, // 队尾
+  shared: SharedQueue<State> | null, // 共享队列
+  effects: Array<Update<State>> // 用于保存callback回调函数的Update对象，在commit之后会依次执行里面的回调函数
+}
+```
+
