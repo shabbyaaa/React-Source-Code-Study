@@ -149,3 +149,58 @@ type UpdateQueue<State> = {
   };
 ```
 
+
+
+
+
+## 项目启动
+
+#### react-dom包中暴露出render unmount方法
+
+```jsx
+// react-dom/src/client/ReactDOMRoot.js
+function ReactDOMRoot(internalRoot) {
+  this._internalRoot = internalRoot
+}
+
+// updateContainer 来自 react-reconciler/src/ReactFiberReconciler
+ReactDOMRoot.prototype.render = function(children: ReactNodeList) {
+  updateContainer(children, root, null, null)
+}
+
+ReactDOMRoot.prototype.unmount = function() {
+  const root = this._internalRoot
+  const container = root.containerInfo
+  
+  updateContainer(null, root, null, () => {
+    unmarkContainerAsRoot(container)
+  })
+}
+
+// react-reconciler/src/ReactFiberReconciler.js
+function UpdateContainer(
+	 element: ReactNodeList,
+   container: QueueRoot,
+   parentComponent,
+   callback
+) {
+  const current = container.current
+  const eventTime = requestEventTime() // 获取程序运行到目前为止的时间，用于进行优先级排序
+  const lane = requestUpdateLane(current) // 获取优先级
+  
+  const update = createUpdate(eventTime, lane)
+  update.payload = { element } // 实际要更新的值
+     
+  enqueueUpdate(current, update, lane)
+   //scheduleUpdateOnFiber 首次渲染或者后续更新都会调用此api
+   // 在ReactFiberWorkLoop.js中 调用 performSyncWorkOnRoot(root)
+  const root = scheduleUpdateOnFiber(current, lane, eventTime)
+  
+  if (root !== null) {
+    entangleTransitions(root, current, lane)
+  }
+     
+  return lane
+}
+```
+

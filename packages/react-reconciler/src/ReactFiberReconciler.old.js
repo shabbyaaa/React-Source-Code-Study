@@ -267,8 +267,8 @@ export function updateContainer(
     onScheduleRoot(container, element);
   }
   const current = container.current;
-  const eventTime = requestEventTime();
-  const lane = requestUpdateLane(current);
+  const eventTime = requestEventTime(); // 获取程序运行到目前为止的时间，用于进行优先级排序
+  const lane = requestUpdateLane(current); // 获取优先级
 
   if (enableSchedulingProfiler) {
     markRenderScheduled(lane);
@@ -298,7 +298,7 @@ export function updateContainer(
     }
   }
 
-  const update = createUpdate(eventTime, lane);
+  const update = createUpdate(eventTime, lane);  // new Update()
   // Caution: React DevTools currently depends on this property
   // being called "element".
   update.payload = {element};
@@ -319,7 +319,7 @@ export function updateContainer(
 
   enqueueUpdate(current, update, lane);
   const root = scheduleUpdateOnFiber(current, lane, eventTime);
-  if (root !== null) {
+  if (root !== null) { // 维护优先级相关
     entangleTransitions(root, current, lane);
   }
 

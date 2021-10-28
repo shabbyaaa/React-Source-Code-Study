@@ -527,6 +527,7 @@ export function scheduleUpdateOnFiber(
       // This is a legacy edge case. The initial mount of a ReactDOM.render-ed
       // root inside of batchedUpdates should be synchronous, but layout updates
       // should be deferred until the end of the batch.
+      // 构造fiber
       performSyncWorkOnRoot(root);
     } else {
       ensureRootIsScheduled(root, eventTime);
@@ -545,6 +546,7 @@ export function scheduleUpdateOnFiber(
     }
   } else {
     // Schedule other updates after in case the callback is sync.
+    // 在同步回调后 调度其他更新
     ensureRootIsScheduled(root, eventTime);
   }
 

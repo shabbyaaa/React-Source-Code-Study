@@ -71,6 +71,7 @@ function ReactDOMRoot(internalRoot) {
   this._internalRoot = internalRoot;
 }
 
+// 通过此方法 启动React项目启动
 ReactDOMRoot.prototype.render = function(children: ReactNodeList): void {
   const root = this._internalRoot;
   if (__DEV__) {
