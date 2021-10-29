@@ -447,6 +447,7 @@ function requestRetryLane(fiber: Fiber) {
   return claimNextRetryLane();
 }
 
+// 无论首次渲染还是update走到这里
 export function scheduleUpdateOnFiber(
   fiber: Fiber,
   lane: Lane,
@@ -527,9 +528,10 @@ export function scheduleUpdateOnFiber(
       // This is a legacy edge case. The initial mount of a ReactDOM.render-ed
       // root inside of batchedUpdates should be synchronous, but layout updates
       // should be deferred until the end of the batch.
-      // 构造fiber
+      // 直接构造fiber
       performSyncWorkOnRoot(root);
     } else {
+      // 间接构造Fiber
       ensureRootIsScheduled(root, eventTime);
       if (
         executionContext === NoContext &&
