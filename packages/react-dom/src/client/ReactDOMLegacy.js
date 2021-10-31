@@ -115,7 +115,7 @@ function legacyCreateRootFromDOMContainer(
     }
   }
 
-  const root = createContainer(
+  const root = createContainer(   // createFiberRoot (react-reconciler)
     container,
     LegacyRoot,
     forceHydrate,
@@ -160,7 +160,8 @@ function legacyRenderSubtreeIntoContainer(
   let root = container._reactRootContainer;
   let fiberRoot: FiberRoot;
   if (!root) {
-    // Initial mount
+    // Initial mount  初次调用   legacy模式下
+    // 创建ReactDOMRoot对象，初始化react应用环境
     root = container._reactRootContainer = legacyCreateRootFromDOMContainer(
       container,
       forceHydrate,
@@ -169,11 +170,13 @@ function legacyRenderSubtreeIntoContainer(
     if (typeof callback === 'function') { 
       const originalCallback = callback;
       callback = function() {
+        // instance最终指向children（入参，例如<APP />）生成的dom节点
         const instance = getPublicRootInstance(fiberRoot);
         originalCallback.call(instance);
       };
     }
     // Initial mount should not be batched.
+    // 更新容器
     unbatchedUpdates(() => {
       updateContainer(children, fiberRoot, parentComponent, callback);
     });

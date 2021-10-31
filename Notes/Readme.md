@@ -1,3 +1,11 @@
+### 启动流程
+
+> 无论是Legacy,Concurrent或Blocking模式，react在初始化时，都会创建3个全局对象
+
+1. ReactDOMRoot对象（属于react-dom）包，暴露有render,unmount方法，调用该实例的render方法，可以引导react应用启动
+2. fiberRoot对象（属于react-reconciler包，作为react-reconciler在运行过程的全局上下文，保存fiber构建过程所依赖的全局对象）
+3. HostRootFiber对象(属于react-reconciler包，这是react应用的第一个fiber对象，是fiber树的根节点，节点的类型是HostRoot)
+
 ## render渲染器 reconciler构造器 scheduler调度器
 
 1. 渲染器 react-dom
