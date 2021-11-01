@@ -6,6 +6,111 @@
 2. fiberRoot对象（属于react-reconciler包，作为react-reconciler在运行过程的全局上下文，保存fiber构建过程所依赖的全局对象）
 3. HostRootFiber对象(属于react-reconciler包，这是react应用的第一个fiber对象，是fiber树的根节点，节点的类型是HostRoot)
 
+blocking模式已在最新的main分支中被移除，在17.0.2的tag中还存在
+
+#### Legacy下的启动
+
+> 通常React项目在Legacy模式下启动都是通过
+> ReactDOM.render(<App />, document.getElementById('app'))
+> 在react-dom/ReactDOM中可以看到render方法来自ReactDOMLegacy.js
+>
+> Hydrate ssr相关 hydrate 描述的是 ReactDOM 复用 ReactDOMServer 服务端渲染的内容时尽可能保留结构，并补充事件绑定等 Client 特有内容的过程。
+
+大致方法调用 legacyRenderSubtreeIntoContainer => createContainer => createFiberRoot => createHostRootFiber => createFiber => new FIberNode
+
+最后根节点fiber上的mode对应三种不同的模式，其根据上面方法的tag决定 
+
+eg: Legacy模式下 createContainer(LegacyRoot)
+
+```jsx
+type RootTag = 0 | 1
+type LegacyRoot = 0
+type ConcurrentROot = 1
+```
+
+```jsx
+function render(
+	element: React$Element(any),
+  container: COntainer,
+  callback: ?function
+) {
+  return legacyRenderSubtreeIntoCOntainer(null, element, container, false, callback)
+}
+
+function legacyRenderSubtreeIntoContainer(
+	parentComponent,
+  children,
+  container,
+  forceHydrate,
+  callback
+) {
+    let root = container._reactRootContainer
+    let fiberRoot: FiberRoot
+    
+    if (!root) {
+      root = container._reactRootContainer = legacyCreateRootFromCOntainer(container, horceHydrate)
+      fiberRoot = root
+      
+      if (typeof callback === 'function') {
+        const originalCallback = callback
+        callback = function() {
+          // instance最终指向children(入参，例如(<APP />生成的dom节点))
+          const instance = getPublicRootInstance(fiberROot)
+          originalCallback.call(instance)
+        }
+      }
+      // 更新容器
+      unbatchUpdates(() => {
+        updateContainer(children, fiberRoot, parentComponent, callback)
+      })
+    } else {
+      fiberRoot = root
+      ...     // callback update
+    }
+}
+    
+function legacyCreateRootFromDOMContainer() {
+  const root = createContainer()
+}
+// react-reconciler
+function createContainer() {
+  return createFiberRoot()
+}
+    
+function createFiberRoot() {
+  const root = new FiberRootNode()
+  
+  const uninitializedFiber = createHostRootFiber() // createFiber()
+  
+  root.current = uninitializedFiber
+  uninitalizedFiber.stateNode = root
+  
+  if (enableCache) {
+    const initialCache = new Map()
+    
+    root.pooledCache = initialCache
+    
+    const initialState = {
+      element: null,
+      cache: inintalCache
+    }
+    
+    unitializedFiber.memoizedState = initialState // 缓存current树的state
+  } else {
+    const initialState = {
+      element: null
+    }
+    uninitializedFiber.memoizedState = initialState
+  }
+  
+  initializedUpdateQueue(uninitializedFiber) // 初始化更新对队列 updateQueue  uninitializedFiber.updateQueue = queue: UpdateQueue<State>;
+  
+  return root
+}
+```
+
+
+
 ## render渲染器 reconciler构造器 scheduler调度器
 
 1. 渲染器 react-dom

@@ -116,6 +116,7 @@ ReactDOMRoot.prototype.unmount = function(): void {
   });
 };
 
+// current模式下启动 ReactDOM.createROot()
 export function createRoot(
   container: Container,
   options?: CreateRootOptions,
@@ -154,6 +155,7 @@ export function createRoot(
     isStrictMode,
     concurrentUpdatesByDefaultOverride,
   );
+  // 标记dom对象，把dom和fiber关联起来
   markContainerAsRoot(root.current, container);
 
   const rootContainerElement =
@@ -219,6 +221,7 @@ export function hydrateRoot(
   // Render the initial children
   updateContainer(initialChildren, root, null, null);
 
+  // _internalRoot = root
   return new ReactDOMRoot(root);
 }
 

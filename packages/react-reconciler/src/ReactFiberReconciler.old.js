@@ -241,7 +241,7 @@ function findHostInstanceWithWarning(
 
 export function createContainer(
   containerInfo: Container,
-  tag: RootTag,
+  tag: RootTag,   // 根节点Fiber  mode三种不同值得根据
   hydrate: boolean,
   hydrationCallbacks: null | SuspenseHydrationCallbacks,
   isStrictMode: boolean,
@@ -257,6 +257,7 @@ export function createContainer(
   );
 }
 
+// 更新容器
 export function updateContainer(
   element: ReactNodeList,
   container: OpaqueRoot,

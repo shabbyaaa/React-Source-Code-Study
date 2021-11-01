@@ -115,6 +115,7 @@ function legacyCreateRootFromDOMContainer(
     }
   }
 
+  // 创建fiber
   const root = createContainer(   // createFiberRoot (react-reconciler)
     container,
     LegacyRoot,
@@ -123,6 +124,7 @@ function legacyCreateRootFromDOMContainer(
     false, // isStrictMode
     false, // concurrentUpdatesByDefaultOverride,
   );
+   // 标记dom对象，把dom和fiber关联起来
   markContainerAsRoot(root.current, container);
 
   const rootContainerElement =

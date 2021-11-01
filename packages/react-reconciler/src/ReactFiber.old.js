@@ -455,6 +455,7 @@ export function createHostRootFiber(
     mode |= ProfileMode;
   }
 
+  // 根据不同的tag 根节点的mode对应三种不同类型，决定整颗子树以什么形式渲染
   return createFiber(HostRoot, null, null, mode);
 }
 
