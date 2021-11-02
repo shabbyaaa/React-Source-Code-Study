@@ -8,6 +8,10 @@
 
 blocking模式已在最新的main分支中被移除，在17.0.2的tag中还存在
 
+updateContainer 在Legacy中直接legacyRenderSubtreeIntoContainer以方法调用
+
+在Concurrent中，则是ReactDOMRoot的原型render上的方法
+
 #### Legacy下的启动
 
 > 通常React项目在Legacy模式下启动都是通过
@@ -59,7 +63,7 @@ function legacyRenderSubtreeIntoContainer(
           originalCallback.call(instance)
         }
       }
-      // 更新容器
+      // 更新容器 将react-dom和react-reconciler串联起来 后面的逻辑都在react-reconciler中
       unbatchUpdates(() => {
         updateContainer(children, fiberRoot, parentComponent, callback)
       })

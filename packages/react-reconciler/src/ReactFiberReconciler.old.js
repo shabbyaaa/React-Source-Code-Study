@@ -319,6 +319,7 @@ export function updateContainer(
   }
 
   enqueueUpdate(current, update, lane);
+  // reconciler的第一个阶段  无论是初始渲染还是更新都会执行到这里
   const root = scheduleUpdateOnFiber(current, lane, eventTime);
   if (root !== null) { // 维护优先级相关
     entangleTransitions(root, current, lane);

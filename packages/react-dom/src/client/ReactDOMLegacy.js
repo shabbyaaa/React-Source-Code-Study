@@ -178,7 +178,7 @@ function legacyRenderSubtreeIntoContainer(
       };
     }
     // Initial mount should not be batched.
-    // 更新容器
+    // updateContainer 更新容器 串联react-dom和react-reconciler 后面的逻辑都在react-reconciler中
     unbatchedUpdates(() => {
       updateContainer(children, fiberRoot, parentComponent, callback);
     });
