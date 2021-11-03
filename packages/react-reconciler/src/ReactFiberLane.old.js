@@ -12,6 +12,7 @@ import type {FiberRoot} from './ReactInternalTypes';
 // TODO: Ideally these types would be opaque but that doesn't work well with
 // our reconciler fork infra, since these leak into non-reconciler packages.
 
+// React从17.0引入的新的优先级 替代之前的expireationTime
 export type Lanes = number;
 export type Lane = number;
 export type LaneMap<T> = Array<T>;
@@ -29,6 +30,19 @@ import {ConcurrentUpdatesByDefaultMode, NoMode} from './ReactTypeOfMode';
 // If those values are changed that package should be rebuilt and redeployed.
 
 export const TotalLanes = 31;
+
+// 定义为二进制变量，利用了位掩码的特性，在频繁运算的时候占用内存少，计算速度快
+// export opaque type ExpirationTimeOpaque = number;
+// export const NoWork: ExpirationTimeOpaque = 0;
+// export const Never: ExpirationTimeOpaque = 1;
+// export const Idle: ExpirationTimeOpaque = 2;
+// export const ContinuousHydration: ExpirationTimeOpaque = 3;
+// export const LongTransition: ExpirationTimeOpaque = 49999;
+// export const ShortTransition: ExpirationTimeOpaque = 99999;
+// export const DefaultUpdateTime: ExpirationTimeOpaque = 1073741296;
+// export const UserBlockingUpdateTime: ExpirationTimeOpaque = 1073741761;
+// export const Sync: ExpirationTimeOpaque = MAX_SIGNED_31_BIT_INT;
+// export const Batched: ExpirationTimeOpaque = Sync - 1;
 
 export const NoLanes: Lanes = /*                        */ 0b0000000000000000000000000000000;
 export const NoLane: Lane = /*                          */ 0b0000000000000000000000000000000;
