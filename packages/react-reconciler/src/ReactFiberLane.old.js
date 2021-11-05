@@ -44,6 +44,7 @@ export const TotalLanes = 31;
 // export const Sync: ExpirationTimeOpaque = MAX_SIGNED_31_BIT_INT;
 // export const Batched: ExpirationTimeOpaque = Sync - 1;
 
+// 占有低位比特位的lane变脸对应的优先级越高
 export const NoLanes: Lanes = /*                        */ 0b0000000000000000000000000000000;
 export const NoLane: Lane = /*                          */ 0b0000000000000000000000000000000;
 

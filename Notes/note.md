@@ -321,3 +321,12 @@ function UpdateContainer(
 }
 ```
 
+- LanePriority: Fiber优先级 react-reconciler
+- SchedulerPriority: 调度优先级 scheduler
+- ReactPriorityLevel: 优先级等级 react-reconciler 负责转换上述两种优先级，衡量他们的的等级
+
+
+
+React将Lane类型定义为二进制变量，利用了位掩码的特征，在频繁的计算中占用内存少，计算速度快
+
+
