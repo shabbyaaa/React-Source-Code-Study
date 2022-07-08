@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      let isMount = true
+      let workInProgressHook = null // 指向当前正在指向的hooks
+      // function component对应的fiber
+      const fiber = {
+        memoizedState: null, // function component 中保存hooks
+        stateNode: App // 对应的function
+      }
+
+      function run() {
+        // 保存第一个hook  初始化操作
+        workInProgressHook = fiber.memoizedState
+
+        const app = fiber.stateNode()
+
+        isMount = false
+        return app
+      }
+
+      // function 改变update的函数
+      function dispatchAction(queue, action) {
+        const update = {
+          action,
+          next: null
+        }
+
+        if (queue.pending === null) { // 当前是否存在一条环状链表
+          update.next = update // 自己和自己相连
+        } else {
+          update.next = queue.pending.next
+          queue.pending.next = update
+        }
+        // queue.pending指向最后一个update
+        queue.pending = update
+
+        run()
+      }
+
+      function useState(initialState) {
+        let hook
+
+        if (isMount) { // 创建hook结构
+          hook = {
+            queue: {
+              pending: null
+            },
+            memoizedState: null, // 保存hooks对应的state属性
+            next: null // 指向下一个hook
+          }
+
+          if (!fiber.memoizedState) {
+            fiber.memoizedState = hook
+          } else {
+            workInProgressHook.next = hook
+          }
+          workInProgressHook = hook
+        } else {
+          hook = workInProgressHook
+          workInProgressHook = workInProgressHook.next
+        }
+
+        let baseState = hook.memoizedState
+
+        // 计算state 不考虑优先级
+        // 这个hook上有要计算的state hook.queue.pending保存最后一个update
+        if (hook.queue.pending) {
+          let firstUpdate = hook.queue.pending.next // 第一个update
+
+          do {
+            // 只考虑useState是个function 不考虑是一个值
+            const action = firstUpdate.action
+
+            baseState = action(baseState)
+            firstUpdate = firstUpdate.next
+          } while(firstUpdate !== hook.queue.pending.next) // 遍历完这个链表
+
+          hook.queue.pending = null
+        }
+        hook.memoizedState = baseState
+
+        return [baseState, dispatchAction.bind(null, hook.queue)]
+      }
+
+      function App() {
+        const [num, updateNum] = useState(0)
+
+        console.log('isMount :>> ', isMount);
+        console.log('num :>> ', num);
+        return {
+          onClick() {
+            updateNum(num => num + 1)
+          }
+        }
+      }
+
+      window.app = run()
+    </script>
+  </body>
+</html>
